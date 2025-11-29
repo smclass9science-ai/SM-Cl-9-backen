@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IIT-JEE-Practice Test</title>
+  <title>IIT-JEE-study Materials</title>
   <style>
     body {
       font-family: sans-serif;
@@ -41,101 +41,15 @@
       cursor: pointer;
     }
 
-    #loginContainer button:hover {
-      background-color: #b2dfdb;
-    }
-
     #appContainer { display: none; }
-
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-      gap: 8px;
-      margin-bottom: 12px;
-      min-width: 0;
-    }
-
-    .header-bar h1 {
-      color: #006064;
-      font-size: 16px;
-      margin: 0;
-      white-space: nowrap;
-      flex: 1;
-      min-width: 0;
-      overflow: hidden; 
-      text-overflow: ellipsis;
-    }
-
-    label {
-      font-weight: bold;
-      color: #00796B;
-      margin-right: 4px;
-      font-size: 12px;
-    }
-
-    select, button {
-      margin: 4px;
-      padding: 5px 8px;
-      border: 2px solid #00796B;
-      border-radius: 5px;
-      background-color: #e0f2f1;
-      color: #004D40;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    select:hover, button:hover { background-color: #b2dfdb; }
-
-    button.back-btn {
-      background-color: #b71c1c;
-      color: white;
-      white-space: nowrap;
-      font-size: 12px;
-      padding: 5px 10px;
-      flex-shrink: 0;
-    }
-    button.back-btn:hover { background-color: #7f0000; }
 
     iframe {
       width: 100%;
-      height: 450px;
+      height: 650px;
       border: 2px solid #004D40;
       margin-top: 15px;
       border-radius: 6px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      transition: height 0.4s ease;
-    }
-
-    @media (max-width: 600px) {
-      body { font-size: 12px; }
-      .header-bar h1 { font-size: 14px; }
-      label { font-size: 11px; }
-      select, button { 
-        width: 100%; 
-        font-size: 11px;
-        padding: 4px 6px; 
-        margin-top: 8px; 
-      }
-      .header-bar { flex-wrap: nowrap; }
-      iframe { height: 350px; }
-    }
-
-    select { white-space: normal !important; height: auto; line-height: 1.2em; }
-    select option { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
-    select option:nth-child(even) { background-color: #e8f4ff; }
-    select option:nth-child(odd) { background-color: #ffffff; }
-
-    .hidden { display: none; }
-
-    .inline-topic {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-left: auto;
-      font-size: 12px;
     }
   </style>
 </head>
@@ -148,80 +62,81 @@
   </div>
 
   <div id="appContainer">
-    <div class="header-bar" id="headerBar">
-      <h1>Practice Test</h1>
-      <button id="backBtn" class="back-btn" onclick="resetAll()">Back</button>
-    </div>
-
-    <div id="controls">
-      <label for="levelSelect">Level / Years:</label>
-      <select id="levelSelect">
-        <option value="">Select Level / Years</option>
-      </select>
-
-      <label for="chapterSelect">Chapter:</label>
-      <select id="chapterSelect" disabled>
-        <option value="">Select Chapter</option>
-      </select>
-    </div>
-
-    <div id="topicRow">
-      <label id="topicLabel" for="itemSelect">Topic / Year:</label>
-      <select id="itemSelect" disabled>
-        <option value="">Select Topic / Year</option>
-      </select>
-    </div>
-
+    <h1 style="color:#006064; font-size:16px;">Study Material</h1>
     <iframe id="viewer" src=""></iframe>
   </div>
 
   <script>
-    const BACKEND_URL = "https://practice-test-backend-iit-jee-math-n9kp.onrender.com";
+    const BACKEND_URL = "https://math-study-material.onrender.com";
+
+    // 🔥 CHANGE THIS LINK — your single URL here
+    const SINGLE_LINK = "https://gten-educational-platform.github.io/Class-12/Study materials Math IIT- JEE.html";
 
     async function login() {
       const email = document.getElementById("emailInput").value.trim().toLowerCase();
-      if (!email || !email.includes("@")) { alert("Your E.Mail ID is not Registered. For registration call +91 9706380857."); return; }
+      if (!email || !email.includes("@")) {
+        alert("Your E.Mail ID is not Registered. For registration call +91 9706380857.");
+        return;
+      }
 
       const res = await fetch(`${BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })
       });
+
       const data = await res.json();
       if (data.token) {
         localStorage.setItem("studentEmail", email);
         localStorage.setItem("sessionToken", data.token);
+
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
-      } else { alert("Login failed. Try again."); }
+
+        // Load the only link
+        document.getElementById("viewer").src = SINGLE_LINK;
+
+      } else {
+        alert("Login failed. Try again.");
+      }
     }
 
+    // Auto-login if token still valid
     window.onload = async function() {
-      const savedEmail = localStorage.getItem("studentEmail");
-      const token = localStorage.getItem("sessionToken");
-      if (!savedEmail || !token) return;
-
-      const res = await fetch(`${BACKEND_URL}/validate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: savedEmail, token })
-      });
-      const data = await res.json();
-      if (data.valid) {
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("appContainer").style.display = "block";
-      } else { localStorage.clear(); }
-    };
-
-    setInterval(async () => {
       const email = localStorage.getItem("studentEmail");
       const token = localStorage.getItem("sessionToken");
       if (!email || !token) return;
+
       const res = await fetch(`${BACKEND_URL}/validate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, token })
       });
+
+      const data = await res.json();
+      if (data.valid) {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("appContainer").style.display = "block";
+
+        // Load single fixed link
+        document.getElementById("viewer").src = SINGLE_LINK;
+      } else {
+        localStorage.clear();
+      }
+    };
+
+    // Auto-logout if logged in on another device
+    setInterval(async () => {
+      const email = localStorage.getItem("studentEmail");
+      const token = localStorage.getItem("sessionToken");
+      if (!email || !token) return;
+
+      const res = await fetch(`${BACKEND_URL}/validate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, token })
+      });
+
       const data = await res.json();
       if (!data.valid) {
         alert("⚠️ You have been logged out because this account was opened on another device.");
@@ -229,178 +144,6 @@
         location.reload();
       }
     }, 5000);
-
-    // === Fixed Catalog JSON with unique keys ===
-   // === Fixed Catalog JSON with unique keys ===
-const catalog = {
-  "Topic wise mcq (basic) Coming Soon": {
-            "Chapter 1 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platfrm.github.io/Class-12/new 7.html",
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/units-measurements/basic/significant-figures.html",
-			  "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/units-measurements/basic/significant-figures.html"
-            },
-            "Chapter 2 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html"
-
-			   },
-			"Chapter 3 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			  "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-				},
-            "Chapter 4 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html"		  
-		  }
-          },
-  "Topic wise mcq (medium)Coming Soon": {
-                       "Chapter 1 - Units and Measurements": {
-              "Coming Soon": "https://gten-educational-plaform.github.io/Class-12/new 7.html",
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/units-measurements/basic/significant-figures.html",
-			  "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/units-measurements/basic/significant-figures.html"
-            },
-            "Chapter 2 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html"
-
-			   },
-			"Chapter 3 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			  "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-				},
-            "Chapter 4 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html",
-			 "Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/motion-1d/basic/uniform-acceleration.html"	
-            }
-          },
- 
- "Topic wise mcq (hard) Coming Soon": {
-            "Chapter 1 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platorm.github.io/Class-12/new 7.html"
-            }
-          },
-		"DPP Question And Solution": {
-            "All Chapter Include": {
-              "All Question, Answerkey and Solution Include ": "https://gten-educational-platform.github.io/Class-12/MATH  DPP-solution.html"
-            }
-          },
- "PYQ mains Coming Soon": {
-            "Chapter 1 - Coming Soon": {
-              "Coming Soon": "https://gten-educational-platorm.github.io/Class-12/new 7.html"
-            }
-          },
-
-"PYQ advance Coming Soon": {
-            "Chapter 1 - Coming Soon": {
-              "2023 Set A Coming Soon": "https://gten-educational-patform.github.io/Class-12/new 7.html",
-              "2022 Set B Coming Soon": "https://gten-educational-platform.github.io/Class-11-Physics/pyq-board/2022-set-b.html"
-    }
-  }
-};
-
-
-
-    const levelSelect   = document.getElementById('levelSelect');
-    const chapterSelect = document.getElementById('chapterSelect');
-    const itemSelect    = document.getElementById('itemSelect');
-    const topicLabel    = document.getElementById('topicLabel');
-    const viewer        = document.getElementById('viewer');
-    const controls      = document.getElementById('controls');
-    const headerBar     = document.getElementById('headerBar');
-    const topicRow      = document.getElementById('topicRow');
-
-    function resetSelect(selectEl, placeholderText, disable = false) {
-      selectEl.innerHTML = `<option value="">${placeholderText}</option>`;
-      selectEl.disabled = disable;
-    }
-    function fillSelect(selectEl, items) { items.forEach(v => { selectEl.innerHTML += `<option value="${v}">${v}</option>`; }); selectEl.disabled = false; }
-    function getKeys(obj) { return obj ? Object.keys(obj) : []; }
-
-    levelSelect.addEventListener('change', () => {
-      const lvl = levelSelect.value;
-      resetSelect(chapterSelect, 'Select Chapter', true);
-      resetSelect(itemSelect, 'Select Topic / Year', true);
-      viewer.src = '';
-      viewer.style.height = "450px";
-      if (!lvl || !catalog[lvl]) return;
-      fillSelect(chapterSelect, getKeys(catalog[lvl]));
-    });
-
-    chapterSelect.addEventListener('change', () => {
-      const lvl  = levelSelect.value;
-      const chap = chapterSelect.value;
-      resetSelect(itemSelect, 'Select Topic / Year', true);
-      viewer.src = '';
-      viewer.style.height = "450px";
-      if (!lvl || !chap || !catalog[lvl]?.[chap]) return;
-      fillSelect(itemSelect, getKeys(catalog[lvl][chap]));
-    });
-
-    itemSelect.addEventListener('change', () => { if (itemSelect.value) loadURL(); });
-
-    function loadURL() {
-      const lvl  = levelSelect.value;
-      const chap = chapterSelect.value;
-      const item = itemSelect.value;
-      if (!lvl || !chap || !item) return;
-      const url = catalog[lvl][chap][item];
-      viewer.src = url;
-      viewer.style.height = "650px";
-      controls.classList.add('hidden');
-
-      let inlineDiv = document.createElement('div');
-      inlineDiv.className = 'inline-topic';
-      inlineDiv.appendChild(topicLabel);
-      inlineDiv.appendChild(itemSelect);
-
-      if (window.innerWidth > 600) {
-        headerBar.appendChild(inlineDiv);
-      } else {
-        topicRow.appendChild(topicLabel);
-        topicRow.appendChild(itemSelect);
-      }
-    }
-
-  function resetAll() {
-  viewer.src = '';
-  viewer.style.height = "450px";
-
-  // Reset all selects
-  resetSelect(levelSelect, 'Select Level / Years', false);
-  resetSelect(chapterSelect, 'Select Chapter', true);
-  resetSelect(itemSelect, 'Select Topic / Year', true);
-
-  // Refill Levels so user can pick again
-  fillSelect(levelSelect, getKeys(catalog));
-
-  // Show dropdown controls again
-  controls.classList.remove('hidden');
-
-  // Move topic controls back below
-  topicRow.appendChild(topicLabel);
-  topicRow.appendChild(itemSelect);
-
-  // Remove inline dropdown (if exists)
-  const inline = headerBar.querySelector('.inline-topic');
-  if (inline) inline.remove();
-}
-
-
-    window.addEventListener('resize', () => {
-      const inline = headerBar.querySelector('.inline-topic');
-      if (inline && window.innerWidth <= 600) {
-        topicRow.appendChild(topicLabel);
-        topicRow.appendChild(itemSelect);
-        inline.remove();
-      }
-    });
-
-    // Fill levels dropdown
-    fillSelect(levelSelect, getKeys(catalog));
   </script>
 </body>
 </html>
