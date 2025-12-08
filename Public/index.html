@@ -7,52 +7,88 @@
 
   <style>
     body {
-      font-family: sans-serif;
-      margin: 15px;
-      background: linear-gradient(135deg, #f9f9f9, #e0f7fa);
-      color: #333;
-      font-size: 13px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffffff, #dce8ff);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    #loginContainer {
+    /* ---- Perfect Center Card ---- */
+    #loginCard {
+      background: #ffffff;
+      padding: 30px 25px 35px 25px;
+      border-radius: 14px;
+      width: 320px;
+      text-align: center;
+
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      border: 1px solid #c7d6ff;
     }
 
-    #loginContainer input {
-      padding: 8px;
-      border: 2px solid #00796B;
-      border-radius: 5px;
+    #loginCard img {
+      width: 95px;
+      margin-bottom: 15px;
+    }
+
+    #loginCard h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      color: #003c8f;
+      font-weight: 700;
+    }
+
+    #loginCard input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #003c8f;
+      border-radius: 6px;
       font-size: 14px;
-      margin-bottom: 10px;
-      width: 250px;
+      margin-bottom: 18px;
+      outline: none;
     }
 
-    #loginContainer button {
-      padding: 8px 12px;
-      border: 2px solid #00796B;
-      border-radius: 5px;
-      background-color: #e0f2f1;
-      color: #004D40;
-      font-size: 13px;
+    #loginCard input:focus {
+      border-color: #004fc5;
+      box-shadow: 0 0 6px rgba(0,102,255,0.25);
+    }
+
+    #loginCard button {
+      width: 100%;
+      padding: 12px;
+      background: #003c8f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
       cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
     }
 
-    #appContainer { 
-      display: none; 
+    #loginCard button:hover {
+      background: #004fc5;
+    }
+
+    /* ---- Viewer ---- */
+    #appContainer {
+      display: none;
+      width: 100vw;
+      height: 100vh;
     }
 
     iframe {
       width: 100%;
-      height: calc(100vh - 20px);
-      border: 2px solid #004D40;
-      border-radius: 6px;
-      margin-top: 0;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
@@ -60,9 +96,16 @@
 <body>
 
   <div id="loginContainer">
-    <h2>Login to Study Materials Class 9 Science</h2>
-    <input type="email" id="emailInput" placeholder="Enter your email" required />
-    <button onclick="login()">Login</button>
+    <div id="loginCard">
+
+      <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png" alt="Logo">
+
+      <h2>Login to Study Materials<br>Class 9 Science</h2>
+
+      <input type="email" id="emailInput" placeholder="Enter your email" required />
+
+      <button onclick="login()">Login</button>
+    </div>
   </div>
 
   <div id="appContainer">
@@ -91,30 +134,14 @@
       const data = await res.json();
 
       if (data.token) {
-        // ❌ DO NOT STORE ANYTHING IN LOCAL STORAGE
-        // ❌ DO NOT SAVE TOKEN
-        // ❌ DO NOT SAVE EMAIL
-
-        // ✔ SHOW STUDY MATERIAL DIRECTLY
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
-
         document.getElementById("viewer").src = SINGLE_LINK;
-
       } else {
         alert("Login failed. Try again.");
       }
     }
-
-    // ❌ REMOVE AUTO-LOGIN
-    // NOTHING RUNS HERE ON PAGE LOAD
-    window.onload = function() {
-      // Always ask email → do nothing here
-    };
-
-    // ❌ REMOVE AUTO-LOGOUT CHECK
-    // Because no token is stored, no need to validate repeatedly
-
   </script>
+
 </body>
 </html>
