@@ -75,6 +75,49 @@
       height: 100%;
       border: none;
     }
+	
+	
+
+
+
+
+
+
+
+
+
+
+.register-btn{
+  display:inline-block;
+  padding:10px 16px;
+  background:linear-gradient(135deg, #ff9800, #f57c00);
+  color:white;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:bold;
+  text-decoration:none;
+  box-shadow:0 4px 8px rgba(0,0,0,0.2);
+  transition:0.3s;
+}
+
+.register-btn:hover{
+  background:linear-gradient(135deg, #ffa726, #ef6c00);
+  transform:translateY(-2px);
+  box-shadow:0 6px 12px rgba(0,0,0,0.3);
+}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
   </style>
 </head>
 
@@ -88,6 +131,30 @@
       <h2>Login to Study Materials<br>Class 9 Science</h2>
 
       <input type="email" id="emailInput" placeholder="Enter your email" required />
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	    <p id="loginError" style="color:red; font-size:13px; margin-top:5px;"></p>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
       <button onclick="login()">Login</button>
     </div>
@@ -98,67 +165,119 @@
   </div>
 
   <script>
-    const BACKEND_URL = "https://sm-cl-9-backen.onrender.com";
+  const BACKEND_URL = "https://sm-cl-9-backen.onrender.com";
 
-    const SINGLE_LINK =
-      "https://smclass9science-ai.github.io/Science-9-store-Std-material/SM class 9 Science.html";
+const SINGLE_LINK =
+"https://smclass9science-ai.github.io/Science-9-store-Std-material/SM class 9 Science.html";
 
-    // ------------------------------
-    // LOGIN FUNCTION (One-device login added)
-    // ------------------------------
 
-    async function login() {
-      const email = document.getElementById("emailInput").value.trim().toLowerCase();
-      if (!email || !email.includes("@")) {
-        alert("Your E.Mail ID is not Registered. For registration call +91 9706380857.");
-        return;
-      }
 
-      const res = await fetch(`${BACKEND_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email })
-      });
 
-      const data = await res.json();
 
-      if (data.token) {
-        localStorage.setItem("studentEmail", email);
-        localStorage.setItem("sessionToken", data.token);
 
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("appContainer").style.display = "block";
-        document.getElementById("viewer").src = SINGLE_LINK;
-      } else {
-        alert("Login failed. Try again.");
-      }
+
+
+
+
+
+
+
+
+
+async function login() {
+  const email = document.getElementById("emailInput").value.trim().toLowerCase();
+  const errorBox = document.getElementById("loginError");
+
+  // Validation
+  if (!email || !email.includes("@")) {
+    errorBox.innerHTML = `
+      Your E-mail ID not found. Click ‘Register’ to generate your login access code (looks like an e-mail).<br><br>
+      <a href="https://gten-educational-platform.github.io/Class-12/email.html" target="_blank" class="register-btn">
+        Register Now
+      </a>
+    `;
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/login`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+
+    if (data.token) {
+      localStorage.setItem("studentEmail", email);
+      localStorage.setItem("sessionToken", data.token);
+
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("appContainer").style.display = "block";
+      document.getElementById("viewer").src = SINGLE_LINK;
+
+    } else {
+      errorBox.innerHTML = `
+        Your E-mail ID not found. Click ‘Register’ to generate your login access code (looks like an e-mail).<br><br>
+        <a href="https://gten-educational-platform.github.io/Class-12/email.html" target="_blank" class="register-btn">
+          Register Now
+        </a>
+      `;
     }
 
-    // ------------------------------
-    // RESTORE SESSION ON PAGE LOAD
-    // ------------------------------
-    window.onload = async function() {
-      const savedEmail = localStorage.getItem("studentEmail");
-      const token = localStorage.getItem("sessionToken");
+  } catch (err) {
+    errorBox.innerText = "Server error. Try later.";
+  }
+} // ✅ VERY IMPORTANT — THIS WAS MISSING
 
-      if (!savedEmail || !token) return;
 
-      const res = await fetch(`${BACKEND_URL}/validate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: savedEmail, token })
-      });
+document.getElementById("emailInput").addEventListener("input", function() {
+  const errorBox = document.getElementById("loginError");
+  errorBox.innerHTML = ""; // 🔥 clears error + hides Register button
+});
 
-      const data = await res.json();
 
-      if (data.valid) {
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("appContainer").style.display = "block";
-        document.getElementById("viewer").src = SINGLE_LINK;
-      } else {
-        localStorage.clear();
-      }
-    };
+
+
+
+
+
+
+
+
+
+
+
+
+// ✅ ADD HERE (RIGHT AFTER LOGIN FUNCTION)
+window.onload = async function() {
+  const email = localStorage.getItem("studentEmail");
+  const token = localStorage.getItem("sessionToken");
+
+  if (!email || !token) return;
+
+  const res = await fetch(`${BACKEND_URL}/validate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, token })
+  });
+
+  const data = await res.json();
+
+  if (data.valid) {
+    document.getElementById("loginContainer").style.display = "none";
+    document.getElementById("appContainer").style.display = "block";
+    document.getElementById("viewer").src = SINGLE_LINK;
+  } else {
+    localStorage.clear();
+  }
+};
+
+
+
+
+
+
 
     // ------------------------------
     // AUTO-LOGOUT IF ANOTHER DEVICE LOGS IN
